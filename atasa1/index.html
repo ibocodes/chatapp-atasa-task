@@ -49,9 +49,9 @@
       <button id="send">Send</button>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://YOUR-RENDER-BACKEND.onrender.com/socket.io/socket.io.js"></script>
     <script>
-      const socket = io();
+     const socket = io("https://YOUR-RENDER-BACKEND.onrender.com");
       const msgInput = document.getElementById("msg");
       const messages = document.getElementById("messages");
 
