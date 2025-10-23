@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>💬 Chat Room</title>
+    <style>
+      body {
+        font-family: Arial;
+        background: #f3f3f3;
+      }
+      #chat {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      #messages {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+      input {
+        width: 80%;
+        padding: 10px;
+      }
+      button {
+        padding: 10px;
+      }
+      .msg {
+        margin: 5px 0;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background: #eaeaea;
+      }
+      .time {
+        font-size: 0.8em;
+        color: gray;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chat">
+      <h2>💬 Chat Room</h2>
+      <div id="messages"></div>
+      <input id="msg" placeholder="Type a message..." />
+      <button id="send">Send</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const msgInput = document.getElementById("msg");
+      const messages = document.getElementById("messages");
+
+      // Load old messages
+      socket.on("loadMessages", (msgs) => {
+        msgs.forEach((m) => addMessage(m.text, m.time));
+      });
+
+      // Display new messages
+      socket.on("chatMessage", (msg) => addMessage(msg.text, msg.time));
+
+      document.getElementById("send").onclick = () => {
+        const msg = msgInput.value.trim();
+        if (!msg) return;
+        socket.emit("chatMessage", msg);
+        msgInput.value = "";
+      };
+
+      function addMessage(text, time) {
+        const div = document.createElement("div");
+        div.classList.add("msg");
+        const date = new Date(time);
+        div.innerHTML = `${text} <span class="time">(${date.toLocaleTimeString()})</span>`;
+
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
